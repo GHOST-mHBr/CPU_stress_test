@@ -5,6 +5,7 @@
 #include <iostream>
 #include <mutex>
 #include <stdexcept>
+#include <string>
 #include <thread>
 #include <unistd.h>
 #include <vector>
@@ -17,14 +18,14 @@ using time_point = std::chrono::time_point<std::chrono::steady_clock>;
 
 int main(int argc, const char **argv)
 {
-  uint32_t number_of_threads{1};
-  uint32_t number_of_steps{1};
+  long number_of_threads{1};
+  long number_of_steps{1};
 
   if (argc != 3)
   {
     std::cout << "Usage: stress T S\nWhere T and S are unsigned integers representing number of threads and number of steps"
               << std::endl;
-    std::cout << "Bad usage. Give me the numnber of threads to run and the "
+    std::cout << "Bad usage. Give me the number of threads to run and the "
                  "number of steps for each thread to run."
               << std::endl;
     std::exit(1);
@@ -32,10 +33,12 @@ int main(int argc, const char **argv)
 
   try
   {
-    number_of_threads = std::stoi(argv[1]);
-    number_of_steps = std::stoi(argv[2]);
+    number_of_threads = std::stol(argv[1]);
+    number_of_steps = std::stol(argv[2]);
+    if(number_of_threads <= 0 || number_of_steps <= 0)
+      throw std::invalid_argument{""};
   }
-  catch (std::invalid_argument e)
+  catch (std::exception e)
   {
     std::cout << "Bad number of threads or steps" << std::endl;
     std::exit(2);
